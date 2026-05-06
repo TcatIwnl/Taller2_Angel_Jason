@@ -1,8 +1,7 @@
 package logica;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.io.File;
+import java.util.*;
+import java.io.*;
 
 public class Sistema {
     private ArrayList<Pokemon> pokedexMaestra;
@@ -19,6 +18,53 @@ public class Sistema {
         cargarGimnasios();
     }
 
+    public boolean cargarPartida() {
+        File file = new File("Registros.txt");
+        
+        //Verificamos si el archivo NO existe o si está totalmente vacío
+        if (!file.exists() || file.length() == 0) {
+            System.out.println("\n[!] No se encontró ninguna partida guardada. Por favor, inicie una Nueva Partida.");
+            return false;
+        }
+        
+        try {
+            Scanner scanner = new Scanner(file);
+            
+            if (scanner.hasNextLine()) {
+                String lineaJugador = scanner.nextLine();
+                String[] datosJugador = lineaJugador.split(";");
+                
+                this.jugadorActual = new Jugador(datosJugador[0], datosJugador[1]);
+                
+                while (scanner.hasNextLine()) {
+                    String lineaPkmn = scanner.nextLine();
+                    if (!lineaPkmn.trim().isEmpty()) { // Evitamos líneas en blanco
+                        String[] datosPkmn = lineaPkmn.split(";");
+                        String nombrePkmn = datosPkmn[0];
+                        String estadoPkmn = datosPkmn[1];
+                        
+                        // Buscamos las estadísticas base del Pokémon en la Pokedex maestra
+                        Pokemon pMaestro = buscarEnPokedex(nombrePkmn);
+                        
+                        if (pMaestro != null) {
+                            // Usamos tu constructor especial que recibe el Pokémon y el estado
+                            Pokemon pGuardado = new Pokemon(pMaestro, estadoPkmn);
+                            
+                            // Lo añadimos directamente a la lista del jugador
+                            this.jugadorActual.getListaPokemon().add(pGuardado);
+                        }
+                    }
+                }
+            }
+            scanner.close();
+            return true;
+            
+        } catch (Exception e) {
+            System.out.println("Error al intentar leer el archivo: " + e.getMessage());
+            return false;
+        }
+    }
+    
     private void cargarPokedex() {
         try {
             File file = new File("Pokedex.txt");
@@ -73,7 +119,6 @@ public class Sistema {
         }
         return null;
     }
-    
     
     public void cargarGimnasios() {
     
@@ -132,4 +177,34 @@ public class Sistema {
     public ArrayList<Gimnasio> getListaGimnasios() {
     	return listaGimnasios;
     }
+    
+    public void guardarPartida() {
+    	if (jugadorActual == null) {
+            System.out.println("No hay ninguna partida activa para guardar.");
+            return;
+        }
+
+        try {
+            // FileWriter con false (por defecto) sobrescribe el archivo completo
+            BufferedWriter writer = new BufferedWriter(new FileWriter("Registros.txt"));
+            
+            writer.write(jugadorActual.getNombre() + ";" + jugadorActual.getMedallas());
+            writer.newLine(); //salto de linea
+            
+            //Recorremos la lista de Pokémon del jugador para guardar su estado
+            for (Pokemon p : jugadorActual.getListaPokemon()) {
+                writer.write(p.getNombre() + ";" + p.getEstado());
+                writer.newLine();
+            }
+            
+            //debemos cerrar el writer para que los cambios se guarden.
+            writer.close();
+            
+            System.out.println("¡Partida guardada con éxito!");
+            
+        } catch (IOException e) {
+            System.out.println("Error al intentar guardar la partida: " + e.getMessage());
+        }
+    }
+    
 }
