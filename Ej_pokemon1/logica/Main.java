@@ -29,10 +29,10 @@ public class Main {
 
              switch (opcion) {
                  case 1:
-                	 if (sistema.cargarPartida())
+                	 if (sistema.cargarPartida()) { // Fix ejecucón de menu secundario por if sin corchetes
                 		 System.out.println("\n¡Bienvenido de vuelta, " + sistema.getJugadorActual().getNombre() + "!");
                 		 menuSecundario(sistema, scanner);
-                	 
+                	 }
                      break;
 
                  case 2:
@@ -82,10 +82,10 @@ public class Main {
              opcionSub = Integer.parseInt(scanner.nextLine());
              switch (opcionSub) {
                  case 1:
-                	 
+                	 sistema.revisarEquipo();
                      break;
                  case 2:
-                	 
+                	 sistema.salirACapturar(scanner);
                      break;
 				 case 3:
 						
@@ -97,7 +97,7 @@ public class Main {
 						
 					 break;
 				 case 6:
-						
+					 sistema.curarPokemones();
 					 break;
                  case 7:
                      sistema.guardarPartida();
