@@ -29,21 +29,28 @@ public class Main {
 
              switch (opcion) {
                  case 1:
-                	 if (sistema.cargarPartida()) { // Fix ejecucón de menu secundario por if sin corchetes
+                	 if (sistema.cargarPartida()) {
                 		 System.out.println("\n¡Bienvenido de vuelta, " + sistema.getJugadorActual().getNombre() + "!");
                 		 menuSecundario(sistema, scanner);
                 	 }
                      break;
 
                  case 2:
-                     System.out.print("Ingrese su apodo de jugador: ");
-                     String nombre = scanner.nextLine();
-                     Jugador nuevoJugador = new Jugador(nombre, "none");
-                     sistema.setJugadorActual(nuevoJugador);
-                     System.out.println("\n¡Bienvenido " + nombre + "!");
-                     
-                     menuSecundario(sistema, scanner);
-                     break;
+                	    String nombre;
+                	    do {
+                	        System.out.print("Ingrese su apodo de jugador: ");
+                	        nombre = scanner.nextLine().trim();
+                	        if (nombre.isEmpty()) {
+                	            System.out.println("El nombre no puede estar vacío. Inténtalo de nuevo.");
+                	        }
+                	    } while (nombre.isEmpty());
+
+                	    Jugador nuevoJugador = new Jugador(nombre, "none");
+                	    sistema.setJugadorActual(nuevoJugador);
+                	    System.out.println("\n¡Bienvenido " + nombre + "!");
+                	    
+                	    menuSecundario(sistema, scanner);
+                	    break;
 
                  case 3:
                 	 
@@ -91,10 +98,10 @@ public class Main {
 					 sistema.accederPC(scanner);
 					 break;
 				 case 4:
-						
+					 sistema.retarGimnasio(scanner);
 					 break;
 				 case 5:
-						
+					 sistema.desafiarAltoMando(scanner);
 					 break;
 				 case 6:
 					 sistema.curarPokemones();

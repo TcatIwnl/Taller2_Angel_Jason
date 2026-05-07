@@ -36,7 +36,10 @@ public class Gimnasio {
 	public ArrayList<Pokemon> getEquipoLider() {
 		return equipoLider;
 	}
-    
+
+	public void setEstado(String estado) {
+	    this.estado = estado;
+	}
     
     
 }

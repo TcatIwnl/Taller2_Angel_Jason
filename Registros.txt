@@ -1,8 +1,0 @@
-Valepipi;none
-Swanna;Vivo
-Azumarill;Vivo
-Ludicolo;Vivo
-Poliwrath;Vivo
-Tyranitar;Vivo
-Centiskorch;Vivo
-Lucario;Vivo
