@@ -22,6 +22,69 @@ public class Sistema {
         cargarAltoMando();
     }
     
+    public void accederPC(Scanner scanner) {
+        // Validamos que el jugador tenga una lista instanciada
+        if (jugadorActual == null || jugadorActual.getListaPokemon().isEmpty()) {
+            System.out.println("\nAún no tienes Pokémon registrados en tu PC.");
+            return;
+        }
+
+        ArrayList<Pokemon> lista = jugadorActual.getListaPokemon();
+        boolean salir = false;
+
+        while (!salir) {
+            System.out.println("\n--- PC DE " + jugadorActual.getNombre().toUpperCase() + " ---");
+            
+            //Mostrar todos los Pokémon numerados
+            for (int i = 0; i < lista.size(); i++) {
+                // Separadores visuales
+                if (i == 0) System.out.println("[ EQUIPO PRINCIPAL ]");
+                if (i == 6) System.out.println("\n[ ALMACENADOS EN EL PC ]");
+                
+                Pokemon p = lista.get(i);
+                System.out.println((i + 1) + ") " + p.getNombre() + " - Estado: " + p.getEstado());
+            }
+
+            System.out.println("\n¿Qué deseas hacer?");
+            System.out.println("1) Cambiar Pokémon");
+            System.out.println("2) Salir");
+            System.out.print("Ingrese Opción: ");
+
+            try {
+                int opcion = Integer.parseInt(scanner.nextLine());
+                
+                if (opcion == 2) {
+                    salir = true;
+                    System.out.println("Cerrando el sistema del PC...");
+                } else if (opcion == 1) {
+                    // Validamos que tenga al menos 2 Pokémon para hacer un intercambio
+                    if (lista.size() < 2) {
+                        System.out.println("Necesitas tener al menos 2 Pokémon para hacer un cambio.");
+                        continue;
+                    }
+
+                    //Pedir las posiciones
+                    System.out.print("Ingrese el número del primer Pokémon: ");
+                    int pos1 = Integer.parseInt(scanner.nextLine()) - 1; 
+                    
+                    System.out.print("Ingrese el número del segundo Pokémon: ");
+                    int pos2 = Integer.parseInt(scanner.nextLine()) - 1;
+
+                    boolean exito = jugadorActual.cambiarPosicion(pos1, pos2);
+                    
+                    if (exito) {
+                        System.out.println("\n¡Cambio realizado con éxito!");
+                    } else {
+                        System.out.println("Error: Uno de los números ingresados está fuera de rango.");
+                    }               
+                    
+                }
+            } catch (Exception e) {
+                System.out.println("Error: Por favor, ingrese solo números.");
+            }
+        }
+    }
+    
     public void salirACapturar(Scanner scanner) {
         System.out.println("\n¿Donde deseas ir a explorar?");
         System.out.println("\nZonas disponibles:");
@@ -140,15 +203,20 @@ public class Sistema {
     }
     
     public void curarPokemones() {
-        if (jugadorActual != null) {
+    	if (jugadorActual.getListaPokemon().isEmpty()) {
+    		System.out.println("\nNo hay Pokemones que curar!");
+    	}else {
+    		if (jugadorActual != null) {
 
-            for (Pokemon p : jugadorActual.getListaPokemon()) {
-                p.setEstado("Vivo");
+                for (Pokemon p : jugadorActual.getListaPokemon()) {
+                    p.setEstado("Vivo");
+                }
+                System.out.println("¡Tus Pokémon han sido curados! Todos están en estado: Vivo.");
+            } else {
+                System.out.println("Error: No hay un jugador activo.");
             }
-            System.out.println("¡Tus Pokémon han sido curados! Todos están en estado: Vivo.");
-        } else {
-            System.out.println("Error: No hay un jugador activo.");
-        }
+		}
+        
     }
 
     private void cargarAltoMando() {

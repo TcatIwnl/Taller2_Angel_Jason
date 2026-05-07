@@ -88,7 +88,7 @@ public class Main {
                 	 sistema.salirACapturar(scanner);
                      break;
 				 case 3:
-						
+					 sistema.accederPC(scanner);
 					 break;
 				 case 4:
 						
