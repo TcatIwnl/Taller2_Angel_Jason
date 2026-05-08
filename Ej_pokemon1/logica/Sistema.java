@@ -3,6 +3,13 @@ package logica;
 import java.util.*;
 import java.io.*;
 
+/**
+ * Clase principal que administra la lógica general del juego.
+ * 
+ * Se encarga de cargar datos desde archivos, manejar al jugador actual,
+ * controlar capturas, batallas contra gimnasios, desafíos al Alto Mando,
+ * curación de Pokémon, acceso al PC y guardado/carga de partidas.
+ */
 public class Sistema {
     private ArrayList<Pokemon> pokedexMaestra;
     private ArrayList<String> listaHabitats;
@@ -10,6 +17,12 @@ public class Sistema {
     private ArrayList<AltoMando> listaAltoMando;
     private Jugador jugadorActual;
 
+    /**
+     * Constructor de la clase Sistema.
+     * 
+     * Inicializa las listas principales del sistema y carga la información
+     * necesaria desde los archivos de texto.
+     */
     public Sistema() {
         this.pokedexMaestra = new ArrayList<>();
         this.listaHabitats = new ArrayList<>();
@@ -22,6 +35,14 @@ public class Sistema {
         cargarAltoMando();
     }
     
+    /**
+     * Permite al jugador desafiar al Alto Mando.
+     * 
+     * Antes de iniciar el desafío, valida que el jugador haya derrotado
+     * todos los gimnasios y que tenga al menos un Pokémon vivo en su equipo.
+     * 
+     * @param scanner Scanner utilizado para leer las opciones ingresadas por el usuario.
+     */
     public void desafiarAltoMando(Scanner scanner) {
         if (listaGimnasios.isEmpty() || !listaGimnasios.get(listaGimnasios.size() - 1).getEstado().equalsIgnoreCase("Derrotado")) {
             System.out.println("\n¡Aun no estas listo! Debes derrotar a todos los Lideres de Gimnasio antes de entrar aqui.");
@@ -51,6 +72,16 @@ public class Sistema {
         jugadorActual.setMedallas("CAMPEON");
     }
 
+    /**
+     * Ejecuta una batalla contra un integrante del Alto Mando.
+     * 
+     * La batalla compara los puntajes finales de los Pokémon considerando
+     * sus estadísticas y la efectividad entre tipos.
+     * 
+     * @param am Integrante del Alto Mando que será enfrentado.
+     * @param scanner Scanner utilizado para leer las acciones del usuario.
+     * @return true si el jugador gana la batalla, false si pierde o se rinde.
+     */
     private boolean batallaMando(AltoMando am, Scanner scanner) {
         int indexRival = 0;
         Pokemon pkmnRival = am.getEquipo().get(indexRival);
@@ -112,7 +143,14 @@ public class Sistema {
     }
     
     
-
+    /**
+     * Permite al jugador seleccionar y retar a un gimnasio.
+     * 
+     * Valida si el gimnasio ya fue derrotado, si corresponde al orden correcto
+     * de progreso y si el jugador posee Pokémon vivos para combatir.
+     * 
+     * @param scanner Scanner utilizado para leer la opción del usuario.
+     */
     public void retarGimnasio(Scanner scanner) {
         System.out.println("\n¿A cuál Líder deseas retar??");
         
@@ -160,6 +198,16 @@ public class Sistema {
         }
     }
 
+    /**
+     * Inicia y controla una batalla contra un líder de gimnasio.
+     * 
+     * El combate permite atacar, cambiar Pokémon o rendirse. Los resultados
+     * se determinan comparando estadísticas totales modificadas por la
+     * efectividad de tipos.
+     * 
+     * @param gym Gimnasio cuyo líder será enfrentado.
+     * @param scanner Scanner utilizado para leer acciones del jugador.
+     */
     private void iniciarBatallaGimnasio(Gimnasio gym, Scanner scanner) {
         int indexLider = 0;
         Pokemon pkmnLider = gym.getEquipoLider().get(indexLider);
@@ -253,6 +301,12 @@ public class Sistema {
         }
     }
 
+    /**
+     * Busca el primer Pokémon vivo dentro de los primeros seis Pokémon
+     * del jugador, considerados como su equipo principal.
+     * 
+     * @return Primer Pokémon vivo encontrado o null si no existe ninguno.
+     */
     private Pokemon obtenerPrimerVivoEquipo() {
         int limite = Math.min(jugadorActual.getListaPokemon().size(), 6);
         for (int i = 0; i < limite; i++) {
@@ -262,6 +316,15 @@ public class Sistema {
         return null;
     }
 
+    /**
+     * Permite al jugador cambiar de Pokémon durante una batalla.
+     * 
+     * Muestra los Pokémon del equipo principal y permite seleccionar
+     * uno que no esté debilitado.
+     * 
+     * @param scanner Scanner utilizado para leer la selección del usuario.
+     * @return Pokémon seleccionado o null si el jugador cancela la acción.
+     */
     private Pokemon cambiarPokemonBatalla(Scanner scanner) {
         System.out.println("\nElige a tu siguiente Pokémon:");
         int limite = Math.min(jugadorActual.getListaPokemon().size(), 6);
@@ -292,6 +355,12 @@ public class Sistema {
         }
     }
 
+    /**
+     * Verifica si el jugador tiene al menos un Pokémon vivo
+     * dentro de su equipo principal.
+     * 
+     * @return true si existe al menos un Pokémon vivo, false en caso contrario.
+     */
     private boolean tieneEquipoVivo() {
         if (jugadorActual.getListaPokemon().isEmpty()) return false;
         int limite = Math.min(jugadorActual.getListaPokemon().size(), 6);
@@ -301,6 +370,14 @@ public class Sistema {
         return false;
     }
 
+    /**
+     * Permite al jugador acceder al PC.
+     * 
+     * Desde esta opción puede revisar sus Pokémon y cambiar posiciones
+     * entre ellos para organizar el equipo principal y los Pokémon almacenados.
+     * 
+     * @param scanner Scanner utilizado para leer las opciones del usuario.
+     */
     public void accederPC(Scanner scanner) {
         if (jugadorActual == null || jugadorActual.getListaPokemon().isEmpty()) {
             System.out.println("\nAún no tienes Pokémon registrados en tu PC.");
@@ -344,6 +421,14 @@ public class Sistema {
         }
     }
 
+    /**
+     * Permite al jugador salir a capturar Pokémon en una zona disponible.
+     * 
+     * El Pokémon salvaje se selecciona usando el porcentaje de aparición
+     * de los Pokémon registrados en el hábitat elegido.
+     * 
+     * @param scanner Scanner utilizado para leer las opciones del usuario.
+     */
     public void salirACapturar(Scanner scanner) {
         System.out.println("\n¿Donde deseas ir a explorar?");
         System.out.println("\nZonas disponibles:");
@@ -412,6 +497,12 @@ public class Sistema {
         }
     }
 
+    /**
+     * Muestra los Pokémon actuales del equipo principal del jugador.
+     * 
+     * Solo se muestran los primeros seis Pokémon de la lista,
+     * correspondientes al equipo activo.
+     */
     public void revisarEquipo() {
         if (jugadorActual == null || jugadorActual.getListaPokemon().isEmpty()) {
             System.out.println("\nTu equipo está vacío. ¡Sal a explorar y capturar Pokémon!");
@@ -426,6 +517,11 @@ public class Sistema {
         }
     }
 
+    /**
+     * Cura todos los Pokémon del jugador.
+     * 
+     * Cambia el estado de todos los Pokémon registrados a "Vivo".
+     */
     public void curarPokemones() {
         if (jugadorActual.getListaPokemon().isEmpty()) System.out.println("\nNo hay Pokemones que curar!");
         else {
@@ -436,6 +532,12 @@ public class Sistema {
         }
     }
 
+    /**
+     * Carga la información de los integrantes del Alto Mando desde archivo.
+     * 
+     * Lee el archivo "Alto Mando.txt", crea los objetos AltoMando
+     * y agrega sus Pokémon correspondientes desde la Pokedex maestra.
+     */
     private void cargarAltoMando() {
         try {
             File file = new File("Alto Mando.txt");
@@ -458,6 +560,14 @@ public class Sistema {
         }
     }
 
+    /**
+     * Carga una partida guardada desde el archivo "Registros.txt".
+     * 
+     * Reconstruye al jugador actual, sus medallas y la lista de Pokémon
+     * guardados junto con sus respectivos estados.
+     * 
+     * @return true si la partida fue cargada correctamente, false si ocurre un error.
+     */
     public boolean cargarPartida() {
         File file = new File("Registros.txt");
         if (!file.exists() || file.length() == 0) {
@@ -502,6 +612,12 @@ public class Sistema {
         }
     }
 
+    /**
+     * Carga la Pokedex maestra desde el archivo "Pokedex.txt".
+     * 
+     * Cada línea del archivo representa un Pokémon con sus datos,
+     * estadísticas, hábitat, porcentaje de aparición y tipo.
+     */
     private void cargarPokedex() {
         try {
             File file = new File("Pokedex.txt");
@@ -524,6 +640,11 @@ public class Sistema {
         }
     }
 
+    /**
+     * Carga la lista de hábitats disponibles desde el archivo "Habitats.txt".
+     * 
+     * Cada línea no vacía del archivo se agrega a la lista de hábitats.
+     */
     private void cargarHabitats() {
         try {
             File file = new File("Habitats.txt");
@@ -538,6 +659,12 @@ public class Sistema {
         }
     }
 
+    /**
+     * Busca un Pokémon dentro de la Pokedex maestra por su nombre.
+     * 
+     * @param nombre Nombre del Pokémon que se desea buscar.
+     * @return Pokémon encontrado o null si no existe en la Pokedex.
+     */
     public Pokemon buscarEnPokedex(String nombre) {
         for (Pokemon p : pokedexMaestra) {
             if (p.getNombre().equalsIgnoreCase(nombre)) return p;
@@ -545,6 +672,11 @@ public class Sistema {
         return null;
     }
 
+    /**
+     * Carga los gimnasios desde el archivo "Gimnasios.txt".
+     * 
+     * Crea cada gimnasio con su número, líder, estado y equipo Pokémon.
+     */
     public void cargarGimnasios() {
         try {
             File file = new File("Gimnasios.txt");
@@ -570,11 +702,40 @@ public class Sistema {
         }
     }
 
+    /**
+     * Obtiene la lista de hábitats disponibles.
+     * 
+     * @return Lista de hábitats.
+     */
     public ArrayList<String> getListaHabitats() { return listaHabitats; }
+
+    /**
+     * Obtiene el jugador actual del sistema.
+     * 
+     * @return Jugador actual.
+     */
     public Jugador getJugadorActual() { return jugadorActual; }
+
+    /**
+     * Define el jugador actual del sistema.
+     * 
+     * @param jugador Jugador que será asignado como jugador actual.
+     */
     public void setJugadorActual(Jugador jugador) { this.jugadorActual = jugador; }
+
+    /**
+     * Obtiene la lista de gimnasios cargados en el sistema.
+     * 
+     * @return Lista de gimnasios.
+     */
     public ArrayList<Gimnasio> getListaGimnasios() { return listaGimnasios; }
 
+    /**
+     * Guarda la partida actual en el archivo "Registros.txt".
+     * 
+     * Registra el nombre del jugador, sus medallas y todos los Pokémon
+     * capturados junto con su estado actual.
+     */
     public void guardarPartida() {
         if (jugadorActual == null) {
             System.out.println("No hay ninguna partida activa para guardar.");
